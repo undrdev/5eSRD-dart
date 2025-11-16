@@ -1,3 +1,4 @@
-## 1.0.0
+## 0.1.0
 
-- Initial version.
+- Initial release with generated REST models, GraphQL helpers, coverage script,
+  and dual REST/GraphQL client façade.

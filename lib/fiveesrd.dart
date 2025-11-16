@@ -1,5 +1,3 @@
-library fiveesrd;
-
 export 'src/fiveesrd_client.dart';
 export 'src/config/api_endpoints.dart';
 export 'src/graphql/graphql_client.dart';

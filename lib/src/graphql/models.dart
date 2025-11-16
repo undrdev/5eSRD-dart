@@ -94,7 +94,7 @@ class MonsterDetail extends MonsterSummary {
     super.alignment,
     super.hitPoints,
     super.challengeRating,
-    List<MonsterArmorClassEntry>? armorClass,
+    super.armorClass,
     this.hitPointsRoll,
     this.xp,
     this.strength,
@@ -112,7 +112,7 @@ class MonsterDetail extends MonsterSummary {
     this.conditionImmunities = const [],
     this.proficiencies = const [],
     this.specialAbilities = const [],
-  }) : super(armorClass: armorClass);
+  });
 
   factory MonsterDetail.fromJson(Map<String, dynamic> json) =>
       _$MonsterDetailFromJson(json);

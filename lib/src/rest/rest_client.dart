@@ -6,8 +6,6 @@ import '../version.dart';
 
 typedef _ModelParser<T> = T Function(Map<String, dynamic> json);
 
-typedef _ListParser<T> = T Function(dynamic json);
-
 /// High-level convenience wrapper around the REST resources exposed by the
 /// D&D 5e SRD API.
 class RestClient {
