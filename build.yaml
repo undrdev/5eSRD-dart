@@ -1,0 +1,23 @@
+targets:
+  $default:
+    sources:
+      - lib/**
+      - graphql/**
+      - tool/spec/**
+      - pubspec.yaml
+      - build.yaml
+      - graphql_codegen.yaml
+      - tool/prepare_openapi.dart
+    builders:
+      swagger_dart_code_generator:
+        options:
+          input_folder: tool/spec/swagger
+          output_folder: lib/src/generated/rest
+          with_base_url: false
+          build_only_models: true
+          separate_models: true
+          include_if_null: false
+          add_base_path_to_requests: false
+      json_serializable:
+        options:
+          explicit_to_json: true

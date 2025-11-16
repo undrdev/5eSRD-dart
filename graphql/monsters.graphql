@@ -1,0 +1,100 @@
+# Auto-generated queries for D&D 5e SRD API GraphQL endpoint.
+
+query MonstersOverview($limit: Int, $offset: Int) {
+  monsters(limit: $limit, offset: $offset) {
+    index
+    name
+    size
+    type
+    alignment
+    hit_points
+    challenge_rating
+    armor_class {
+      value
+      type
+    }
+  }
+}
+
+query MonsterDetail($index: String!) {
+  monster(index: $index) {
+    index
+    name
+    size
+    type
+    alignment
+    hit_points
+    hit_dice
+    challenge_rating
+    languages
+    proficiency_bonus
+    damage_vulnerabilities
+    damage_resistances
+    damage_immunities
+    condition_immunities {
+      index
+      name
+      desc
+    }
+    armor_class {
+      value
+      type
+    }
+    actions {
+      name
+      desc
+      attack_bonus
+      dc {
+        type {
+          index
+          name
+        }
+        dc_type {
+          index
+          name
+        }
+        success_type
+      }
+      damage {
+        damage_type {
+          index
+          name
+        }
+        damage_dice
+        damage_bonus
+      }
+    }
+    legendary_actions {
+      name
+      desc
+    }
+    special_abilities {
+      name
+      desc
+      dc {
+        type {
+          index
+          name
+        }
+        dc_type {
+          index
+          name
+        }
+        success_type
+      }
+    }
+  }
+}
+
+query AbilityScores {
+  abilityScores {
+    index
+    name
+    full_name
+    desc
+    skills {
+      index
+      name
+    }
+  }
+}
