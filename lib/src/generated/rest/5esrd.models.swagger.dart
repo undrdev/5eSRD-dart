@@ -952,6 +952,8 @@ class Multiclassing {
   @JsonKey(
     name: 'prerequisite_options',
     includeIfNull: false,
+    fromJson: _choiceListFromJson,
+    toJson: _choiceListToJson,
     defaultValue: <Choice>[],
   )
   final List<Choice>? prerequisiteOptions;
@@ -1116,6 +1118,24 @@ extension $SpellcastingExtension on Spellcasting {
     );
   }
 }
+
+List<Choice>? _choiceListFromJson(dynamic json) {
+  if (json == null) {
+    return <Choice>[];
+  }
+  if (json is List) {
+    return json.whereType<Map<String, dynamic>>().map(Choice.fromJson).toList();
+  }
+  if (json is Map<String, dynamic>) {
+    return [Choice.fromJson(json)];
+  }
+  throw StateError(
+    'Expected list or map for prerequisite_options but received ${json.runtimeType}',
+  );
+}
+
+List<dynamic>? _choiceListToJson(List<Choice>? list) =>
+    list?.map((choice) => choice.toJson()).toList();
 
 @JsonSerializable(explicitToJson: true)
 class Gear {
