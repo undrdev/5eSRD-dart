@@ -1,6 +1,6 @@
 name: fiveesrd
 description: Typed REST and GraphQL client for the D&D 5e SRD API.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/undrdev/5eSRD-dart
 
 environment:
