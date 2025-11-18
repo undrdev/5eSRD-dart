@@ -1,4 +1,4 @@
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, public_member_api_docs
 
 /// Metadata class containing information from SwaggerRequest
 class SwaggerMetaData {

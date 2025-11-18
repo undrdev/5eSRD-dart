@@ -1,5 +1,5 @@
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, public_member_api_docs
 
 import 'package:json_annotation/json_annotation.dart';
 
