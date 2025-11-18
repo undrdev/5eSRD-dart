@@ -1124,7 +1124,14 @@ List<Choice>? _choiceListFromJson(dynamic json) {
     return <Choice>[];
   }
   if (json is List) {
-    return json.whereType<Map<String, dynamic>>().map(Choice.fromJson).toList();
+    return json.map((element) {
+      if (element is Map<String, dynamic>) {
+        return Choice.fromJson(element);
+      }
+      throw StateError(
+        'Unexpected element in prerequisite_options: ${element.runtimeType}',
+      );
+    }).toList();
   }
   if (json is Map<String, dynamic>) {
     return [Choice.fromJson(json)];

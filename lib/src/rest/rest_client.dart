@@ -341,6 +341,7 @@ class RestClient {
     final data = _asMap(
       await _request(relativePath, version: version, query: query),
     );
+    _normalizePayload(relativePath, data);
     return parser(data);
   }
 
@@ -381,5 +382,28 @@ class RestClient {
       return List<dynamic>.from(value);
     }
     throw StateError('Expected JSON list but received ${value.runtimeType}');
+  }
+
+  void _normalizePayload(String path, Map<String, dynamic> json) {
+    if (_isClassDetailPath(path)) {
+      _normalizeClassPayload(json);
+    }
+  }
+
+  bool _isClassDetailPath(String path) {
+    if (!path.startsWith('classes/')) return false;
+    final remainder = path.substring('classes/'.length);
+    return !remainder.contains('/');
+  }
+
+  void _normalizeClassPayload(Map<String, dynamic> json) {
+    final multi = json['multi_classing'];
+    if (multi is! Map<String, dynamic>) return;
+    final prerequisiteOptions = multi['prerequisite_options'];
+    if (prerequisiteOptions is Map<String, dynamic>) {
+      multi['prerequisite_options'] = [prerequisiteOptions];
+    } else if (prerequisiteOptions == null) {
+      multi['prerequisite_options'] = <Map<String, dynamic>>[];
+    }
   }
 }
