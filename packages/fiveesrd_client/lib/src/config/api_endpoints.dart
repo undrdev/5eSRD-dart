@@ -1,6 +1,5 @@
+import 'package:fiveesrd_models/fiveesrd_models.dart';
 import 'package:meta/meta.dart';
-
-import '../version.dart';
 
 /// Default endpoints exposed by https://www.dnd5eapi.co.
 @immutable

@@ -1,8 +1,10 @@
-export 'src/fiveesrd_client.dart';
-export 'src/config/api_endpoints.dart';
-export 'src/graphql/graphql_client.dart';
-export 'src/graphql/models.dart';
-export 'src/models/models.dart';
-export 'src/options/client_options.dart';
-export 'src/rest/rest_client.dart';
-export 'src/version.dart';
+// ignore_for_file: unnecessary_library_name
+
+/// Public umbrella library that re-exports the dedicated packages in the
+/// FiveEsrd suite. Depending on this single package keeps existing consumers
+/// working while enabling incremental migrations to the split packages.
+library fiveesrd;
+
+export 'package:fiveesrd_models/fiveesrd_models.dart';
+export 'package:fiveesrd_client/fiveesrd_client.dart';
+export 'package:fiveesrd_datastore/fiveesrd_datastore.dart';

@@ -1,0 +1,7 @@
+dependency_overrides:
+  fiveesrd_models:
+    path: packages/fiveesrd_models
+  fiveesrd_client:
+    path: packages/fiveesrd_client
+  fiveesrd_datastore:
+    path: packages/fiveesrd_datastore

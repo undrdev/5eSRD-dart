@@ -1,8 +1,8 @@
+import 'package:fiveesrd_models/fiveesrd_models.dart';
+
 import '../config/api_endpoints.dart';
 import '../http/http_client.dart';
-import '../models/models.dart';
 import '../options/client_options.dart';
-import '../version.dart';
 
 typedef _ModelParser<T> = T Function(Map<String, dynamic> json);
 

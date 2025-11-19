@@ -1,0 +1,19 @@
+name: fiveesrd_datastore
+description: Caching and persistence layer for the FiveEsrd suite with pluggable storage.
+version: 0.1.0
+publish_to: none
+repository: https://github.com/undrdev/5eSRD-dart
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  fiveesrd_client: ^0.1.1
+  fiveesrd_models: ^0.1.1
+  collection: ^1.19.0
+  hive: ^2.2.3
+  meta: ^1.15.0
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.25.6

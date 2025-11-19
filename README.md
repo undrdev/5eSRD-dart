@@ -1,120 +1,99 @@
-# fiveesrd
+# FiveEsrd Suite
 
-A Dart client for the official D&D 5e SRD API. It ships strongly typed REST
-models generated from the OpenAPI schema and a GraphQL wrapper that mirrors the
-tutorials published by 5e-bits [1](https://5e-bits.github.io/docs/tutorials/beginner/getting-started)
-[2](https://5e-bits.github.io/docs/tutorials/beginner/graphql).
+This repo now hosts a suite of Dart packages for the official D&D 5e SRD API.
+The legacy `fiveesrd` package remains available for backwards compatibility and
+re-exports the new packages so existing apps continue to build.
 
-- Repository: <https://github.com/undrdev/5eSRD-dart>
-- API docs: <https://5e-bits.github.io/docs/api>
+| Package | What it does |
+| --- | --- |
+| `fiveesrd_models` | Generated REST and GraphQL data models plus shared value objects. |
+| `fiveesrd_client` | Version-aware REST + GraphQL clients with configurable base URLs. |
+| `fiveesrd_datastore` | Caching + persistence layer with in-memory or Hive-backed storage. |
+| `fiveesrd` (legacy) | Thin umbrella export that re-exports the three packages above. |
 
-## Features
+Repository: <https://github.com/undrdev/5eSRD-dart>  
+API docs: <https://5e-bits.github.io/docs/api>
 
-- Version-aware REST helper with 2014 and 2024 endpoints.
-- Programmatic access to every documented resource (spells, monsters, rules,
-  etc.) via typed model classes.
-- Configurable base URLs so self-hosted mirrors of the API can be targeted.
-- Batteries-included GraphQL helper with pre-built queries (monsters,
-  monster detail, ability scores) plus raw query/mutation helpers.
-- Coverage script (`dart run tool/check_coverage.dart`) that validates the
-  generated models, hits each REST endpoint, and runs sample GraphQL queries.
+## Quick start
 
-## Installation
-
-Add the dependency:
+### Use the legacy umbrella (simplest)
 
 ```bash
 dart pub add fiveesrd
 ```
 
-Or point to the GitHub repository if you prefer git-based dependencies:
-
-```yaml
-dependencies:
-  fiveesrd:
-    git:
-      url: https://github.com/undrdev/5eSRD-dart.git
-      ref: main
-```
-
-Optional: point the client to your own deployment by overriding the REST base or
-GraphQL endpoint via `ClientOptions`.
-
-## Usage
-
-Create a `FiveEsrdClient` to access both APIs:
-
 ```dart
 import 'package:fiveesrd/fiveesrd.dart';
 
-final client = FiveEsrdClient(
-  options: ClientOptions(
-    defaultVersion: SrdVersion.v2014,
-    enableLogging: true,
-  ),
-);
-```
-
-### REST examples
-
-Fetch the spell index, then retrieve a concrete spell:
-
-```dart
-final spells = await client.rest.listSpells(query: {'level': 3});
-final spell = await client.rest.getSpell('fireball');
-print('Fireball component count: ${spell.components?.length ?? 0}');
-```
-
-Switch to the 2024 dataset by passing `version: SrdVersion.v2024` to any REST
-call.
-
-### GraphQL examples
-
-Run the documented monsters overview query from the official tutorial [2]:
-
-```dart
-final monsters = await client.graphql.monstersOverview(limit: 5);
-for (final monster in monsters.monsters) {
-  print('${monster.name} (CR ${monster.challengeRating ?? 0})');
+Future<void> main() async {
+  final client = FiveEsrdClient(options: ClientOptions(enableLogging: true));
+  final spells = await client.rest.listSpells(query: {'level': 1});
+  final datastore = FiveEsrdDatastore.fromClient(client);
+  final fighter = await datastore.getClass('fighter');
+  print('Fetched ${fighter.name} with ${spells.results?.length ?? 0} spells cached.');
 }
 ```
 
-You can execute arbitrary queries/mutations if you need full control:
+### Pick and choose packages
+
+```bash
+dart pub add fiveesrd_models
+dart pub add fiveesrd_client
+dart pub add fiveesrd_datastore
+```
 
 ```dart
-final result = await client.graphql.runRawQuery(
-  'query AbilityScoreNames { abilityScores(limit: 3) { name } }',
+import 'package:fiveesrd_client/fiveesrd_client.dart';
+import 'package:fiveesrd_datastore/fiveesrd_datastore.dart';
+
+final client = FiveEsrdClient(
+  options: ClientOptions(defaultVersion: SrdVersion.v2024),
 );
-print(result.data);
+final datastore = FiveEsrdDatastore.fromClient(client);
+
+final monster = await datastore.getMonster('adult-black-dragon');
+print(monster.name);
 ```
 
-## Running the example
+### Hive-backed cache
 
+```dart
+import 'package:fiveesrd_datastore/fiveesrd_datastore.dart';
+import 'package:hive/hive.dart';
+
+Future<FiveEsrdDatastore> buildDatastore(FiveEsrdClient client) async {
+  Hive.init('./.hive');
+  final box = await Hive.openBox<Map>('fiveesrd_cache');
+  return FiveEsrdDatastore.fromClient(
+    client,
+    store: HiveCacheStore(box),
+    defaultTtl: const Duration(hours: 6),
+  );
+}
 ```
-dart run example/fiveesrd_tmp_example.dart
-```
 
-The example demonstrates both a REST lookup (Fireball spell) and a GraphQL
-monster listing.
+## Migration from the monolithic package
 
-## Development scripts
+1. Add direct dependencies on `fiveesrd_models`, `fiveesrd_client`, and
+   `fiveesrd_datastore` (or keep the umbrella `fiveesrd` temporarily).
+2. Replace imports of `package:fiveesrd/fiveesrd.dart` with the specific package
+   you need, e.g. `package:fiveesrd_client/fiveesrd_client.dart`.
+3. Adopt the datastore for caching by constructing a `FiveEsrdDatastore` with the
+   in-memory or Hive cache store.
+4. Once everything compiles and tests pass, remove the umbrella dependency to
+   slim down your transitive graph.
 
-- `dart run tool/prepare_openapi.dart`: merges the upstream OpenAPI spec with
-  2024 endpoints and normalizes it for model generation.
-- `dart run build_runner build --delete-conflicting-outputs`: regenerates the
-  REST model classes.
-- `dart run tool/check_coverage.dart`: ensures every schema has a Dart model,
-  calls each REST endpoint (2014 + 2024), and validates the GraphQL endpoint
-  with tutorial-style queries.
+## Development & scripts
 
-## Contributing
+- `dart run tool/prepare_openapi.dart` – merge/normalize the upstream OpenAPI spec.
+- `cd packages/fiveesrd_models && dart run build_runner build --delete-conflicting-outputs`
+  – regenerate REST/JSON models.
+- `dart run tool/check_coverage.dart` – verify every REST schema has a Dart model
+  and probe key REST/GraphQL endpoints.
+- `dart test` (run from each package) – unit tests for models, client, datastore,
+  plus umbrella smoke tests.
 
-Issues and pull requests are welcome! Please open them at
-<https://github.com/undrdev/5eSRD-dart/issues>. When updating to the latest API:
-
-1. `dart run tool/prepare_openapi.dart`
-2. `dart run build_runner build --delete-conflicting-outputs`
-3. `dart run tool/check_coverage.dart`
-4. `dart test`
+See [CONTRIBUTING.md](CONTRIBUTING.md) for workspace details, code generation
+steps, and publishing guidance.
 
 Happy adventuring! 🐉

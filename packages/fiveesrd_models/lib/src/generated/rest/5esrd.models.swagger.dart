@@ -1145,7 +1145,7 @@ List<dynamic>? _choiceListToJson(List<Choice>? list) =>
     list?.map((choice) => choice.toJson()).toList();
 
 @JsonSerializable(explicitToJson: true)
-class Gear {
+class Gear extends Equipment {
   const Gear({
     this.equipmentCategory,
     this.gearCategory,
@@ -1540,19 +1540,42 @@ extension $EquipmentCategoryExtension on EquipmentCategory {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Equipment {
+/// Union type representing equipment items that can be Weapon, Armor, or Gear.
+///
+/// The concrete type is determined by the `equipment_category.index` field in
+/// the JSON payload:
+/// - `"weapon"` → [Weapon]
+/// - `"armor"` → [Armor]
+/// - `"adventuring-gear"` or `"mounts-and-vehicles"` → [Gear]
+sealed class Equipment {
   const Equipment();
 
-  factory Equipment.fromJson(Map<String, dynamic> json) =>
-      _$EquipmentFromJson(json);
+  /// Deserializes JSON into the appropriate Equipment subtype based on
+  /// `equipment_category.index`.
+  factory Equipment.fromJson(Map<String, dynamic> json) {
+    final equipmentCategory =
+        json['equipment_category'] as Map<String, dynamic>?;
+    final categoryIndex = equipmentCategory?['index'] as String?;
 
-  static const toJsonFactory = _$EquipmentToJson;
-  Map<String, dynamic> toJson() => _$EquipmentToJson(this);
+    switch (categoryIndex) {
+      case 'weapon':
+        return Weapon.fromJson(json);
+      case 'armor':
+        return Armor.fromJson(json);
+      case 'adventuring-gear':
+      case 'mounts-and-vehicles':
+      default:
+        return Gear.fromJson(json);
+    }
+  }
 
-  static const fromJsonFactory = _$EquipmentFromJson;
+  /// Serializes this Equipment instance to JSON.
+  ///
+  /// Delegates to the concrete type's toJson implementation.
+  Map<String, dynamic> toJson();
 
   @override
-  String toString() => jsonEncode(this);
+  String toString() => jsonEncode(toJson());
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -1610,7 +1633,7 @@ extension $CostExtension on Cost {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Weapon {
+class Weapon extends Equipment {
   const Weapon({
     this.equipmentCategory,
     this.weaponCategory,
@@ -1833,7 +1856,7 @@ extension $WeaponExtension on Weapon {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Armor {
+class Armor extends Equipment {
   const Armor({
     this.equipmentCategory,
     this.armorCategory,

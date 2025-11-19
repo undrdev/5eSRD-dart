@@ -1,7 +1,8 @@
 import 'package:meta/meta.dart';
 
+import 'package:fiveesrd_models/fiveesrd_models.dart';
+
 import '../config/api_endpoints.dart';
-import '../version.dart';
 
 /// Configuration shared between the REST and GraphQL clients.
 @immutable

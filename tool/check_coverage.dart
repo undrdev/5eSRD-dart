@@ -17,14 +17,21 @@ Future<void> main() async {
 
 Future<bool> _verifyGeneratedModels() async {
   final swaggerFile = File('tool/spec/swagger/5esrd.swagger.json');
-  final modelsFile = File('lib/src/generated/rest/5esrd.models.swagger.dart');
+  final modelsFile = File(
+    'packages/fiveesrd_models/lib/src/generated/rest/5esrd.models.swagger.dart',
+  );
   if (!swaggerFile.existsSync() || !modelsFile.existsSync()) {
-    stderr.writeln('Missing swagger or generated models. Run prepare_openapi/build_runner.');
+    stderr.writeln(
+      'Missing swagger or generated models. Run prepare_openapi/build_runner.',
+    );
     return false;
   }
 
-  final swagger = jsonDecode(await swaggerFile.readAsString()) as Map<String, dynamic>;
-  final schemas = (swagger['components']?['schemas'] as Map<String, dynamic>?)?.keys ?? const Iterable<String>.empty();
+  final swagger =
+      jsonDecode(await swaggerFile.readAsString()) as Map<String, dynamic>;
+  final schemas =
+      (swagger['components']?['schemas'] as Map<String, dynamic>?)?.keys ??
+      const Iterable<String>.empty();
   final modelsContent = await modelsFile.readAsString();
   final missingSchemas = <String>[];
   for (final schema in schemas) {
@@ -136,7 +143,9 @@ Future<Map<String, dynamic>> _postGraphQl(
 }
 
 String _schemaToClass(String schemaName) {
-  final parts = schemaName.split(RegExp(r'[^A-Za-z0-9]+')).where((part) => part.isNotEmpty);
+  final parts = schemaName
+      .split(RegExp(r'[^A-Za-z0-9]+'))
+      .where((part) => part.isNotEmpty);
   if (parts.isEmpty) {
     return schemaName;
   }

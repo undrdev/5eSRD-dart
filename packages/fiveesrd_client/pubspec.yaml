@@ -1,0 +1,24 @@
+name: fiveesrd_client
+description: REST and GraphQL clients for the FiveEsrd suite.
+version: 0.1.1
+publish_to: none
+repository: https://github.com/undrdev/5eSRD-dart
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  fiveesrd_models: ^0.1.1
+  async: ^2.11.0
+  collection: ^1.19.0
+  dio: ^5.7.0
+  equatable: ^2.0.5
+  graphql: ^5.2.0
+  http: ^1.6.0
+  json_annotation: ^4.9.0
+  logging: ^1.2.0
+  meta: ^1.15.0
+
+dev_dependencies:
+  lints: ^3.0.0
+  build_runner: ^2.4.12
+  json_serializable: ^6.9.0

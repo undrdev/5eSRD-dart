@@ -1,9 +1,8 @@
+import 'package:fiveesrd_models/fiveesrd_models.dart';
 import 'package:graphql/client.dart';
 
 import '../options/client_options.dart';
-import '../version.dart';
 import 'documents.dart';
-import 'models.dart';
 
 /// Lightweight wrapper on top of [GraphQLClient] that ships with a few typed
 /// helpers mirroring the common use-cases described in the official tutorials.
